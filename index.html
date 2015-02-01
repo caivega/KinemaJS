@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div>
+      <h2>X</h2>
+      <button id="x-play">play</button>
+      <button id="x-pause">pause</button>
+      <button id="x-stop">stop</button>
+    </div>
+    <div>
+      <h2>Y</h2>
+      <button id="y-play">play</button>
+      <button id="y-pause">pause</button>
+      <button id="y-stop">stop</button>
+    </div>
+    <canvas id="canvas" width="500px" height="500px"></canvas>
+    <!--<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.2.min.js"></script>-->
+    <script src="rAF.js"></script>
+    <script src="Kinema.js"></script>
+    <script src="Utils.js"></script>
+    <script src="Animation.js"></script>
+    <script>
+        var canvas = document.getElementById('canvas')
+        var ctx = canvas.getContext("2d");
+        /*ctx.fillRect(10,10,1,1);
+        ctx.stroke();*/
+
+        var elem = {
+          x: {
+            play: document.getElementById('x-play'),
+            pause: document.getElementById('x-pause'),
+            stop: document.getElementById('x-stop')
+          },
+          y: {
+            play: document.getElementById('y-play'),
+            pause: document.getElementById('y-pause'),
+            stop: document.getElementById('y-stop')
+          }
+        }
+
+        var x = new Kinema.Animation(function (frame) {
+          //console.log('x: ', frame.time)
+          //ball.setX(frame.time / 100)
+          //ball.setY(frame.time / 100)
+          ctx.fillRect(frame.time / 100, frame.time / 100, 3, 3);
+          //console.log(frame.time / 100, frame.time / 100)
+          ctx.stroke();
+        })
+        var y = new Kinema.Animation(function (frame) {
+          //console.log('y: ', frame.time)
+          //ball.setX(frame.time / 100)
+          //ball.setY(frame.time / 100)
+          ctx.fillRect(500 - frame.time / 100, frame.time / 100, 3, 3);
+          //console.log(500 - frame.time / 100, frame.time / 100)
+          ctx.stroke();
+        })
+
+        elem.x.play.addEventListener('click', function () {
+          x.play()
+        })
+        elem.x.stop.addEventListener('click', function () {
+          x.stop()
+        })
+        elem.x.pause.addEventListener('click', function () {
+          x.pause()
+        })
+        elem.y.play.addEventListener('click', function () {
+          y.play()
+        })
+        elem.y.stop.addEventListener('click', function () {
+          y.stop()
+        })
+        elem.y.pause.addEventListener('click', function () {
+          y.pause()
+        })
+        /*var stage = new Kinetic.Stage({
+          container: 'container',
+          width: 500,
+          height: 500
+        })
+
+        var layer = new Kinetic.Layer()
+
+        var ball = new Kinetic.Circle({
+          x:10,
+          y: 10,
+          radius: 10,
+          fill: 'red'
+        })
+
+        layer.add(ball)
+        stage.add(layer)*/
+
+        /*
+        x.play()
+        y.play()
+        console.log(x.on)
+        console.log(y.on)*/
+
+    </script>
+  </body>
+</html>      
