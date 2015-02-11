@@ -1,60 +1,95 @@
 module.exports = function(grunt) {
-
-  // Add the grunt-mocha-test tasks.
-  grunt.loadNpmTasks('grunt-mocha-test');
-
-  //grunt.loadNpmTasks('grunt-contrib-jshint')
-  //grunt.loadNpmTasks('grunt-contrib-concat')
-  //grunt.loadNpmTasks('grunt-contrib-uglify')
-
   // commonjs to module for browser
-  //grunt.loadNpmTasks('grunt-browserify')
+  grunt.loadNpmTasks('grunt-browserify')
+  grunt.loadNpmTasks('grunt-contrib-copy')
+  grunt.loadNpmTasks('grunt-contrib-uglify')
+  grunt.loadNpmTasks('grunt-contrib-connect')
+  grunt.loadNpmTasks('grunt-contrib-watch')
 
   grunt.initConfig({
-    // Configure a mochaTest task https://github.com/pghalliday/grunt-mocha-test
-    mochaTest: {
-      test: {
+    connect: {
+      dev: {
         options: {
-          reporter: 'spec',
-          //captureFile: 'results.txt', // Optionally capture the reporter output to a file
-          quiet: false, // Optionally suppress output to standard out (defaults to false)
-          clearRequireCache: false // Optionally clear the require cache before running tests (defaults to false)
+          port: 9090,
+          hostname: 'localhost',
+          base: 'gh-pages/dev/',
+          livereload: true
         },
-        src: ['test/**/*.js']
+        middleware: function(connect, options) {
+          return [
+            require('grunt-contrib-livereload/lib/utils').livereloadSnippet,
+            connect.static(options.base)
+          ];
+        }
+      },
+      prod: {
+        options: {
+          port: 9099,
+          hostname: 'localhost',
+          base: 'gh-pages/prod/',
+          livereload: true
+        }
+      },
+    },
+    watch: {
+      options: {
+        livereload: true
+      },
+      'scripts-dev': {
+        files: ['src/**/*.js'],
+        tasks: ['browserify:dev']
+      },
+      'scripts-prod': {
+        files: ['src/**/*.js'],
+        tasks: ['browserify:prod', 'uglify:prod']
+      },
+      'copy-dev': {
+        files: ['src/gh-pages/index.html'],
+        tasks: ['copy:dev']
+      },
+      'copy-prod': {
+        files: ['src/gh-pages/index.html'],
+        tasks: ['copy:prod']
       }
     },
     browserify: {
-        build: {
-            // before 1.x.y
-            //options: {
-            //    standalone: "BSTree"
-            //},
-            // now ->
-            options: {
-                browserifyOptions: {
-                    standalone: 'BSTree',
-                }
-            },
-            src: './index.js',
-            dest: './bstree.src.js'
-        }
+      dev: {
+        src: 'src/gh-pages/js/main.js',
+        dest: 'gh-pages/dev/js/main.js'
+      },
+      prod: {
+        src: 'src/gh-pages/js/main.js',
+        dest: 'gh-pages/prod/js/main.js'
+      }
     },
     uglify: {
-        dist: {
-            src: './bstree.src.js',
-            dest: './bstree.min.js'
-        },
-        options: {
-            //compress: true,
-            mangle: {
-              except: ['BSTree']
-            },
-        }        
+       prod: {
+        files: {
+          'gh-pages/prod/js/main.js': ['gh-pages/prod/js/main.js']
+        }
+      }
     },
+    copy: {
+      'html-dev': {
+        expand: true,
+        cwd: 'src/gh-pages/',
+        src: ['index.html'],
+        dest: 'gh-pages/dev/',
+      },
+      'html-prod': {
+        expand: true,
+        cwd: 'src/gh-pages/',
+        src: ['index.html'],
+        dest: 'gh-pages/prod/',
+      },
+    }
   });
 
-  //grunt.registerTask('default', 'mochaTest');
-  grunt.registerTask('test', 'mochaTest');
-  //grunt.registerTask('bower', ['browserify', 'uglify']);
+  grunt.registerTask('copy:dev', ['copy:html-dev']);
+  grunt.registerTask('copy:prod', ['copy:html-prod']);
+  grunt.registerTask('build:dev', ['copy:dev', 'browserify:dev']);
+  grunt.registerTask('build:prod', ['copy:prod', 'browserify:prod', 'uglify:prod']);
+  grunt.registerTask('server:dev', ['build:dev', 'connect:dev', 'watch']);
+  grunt.registerTask('server:prod', ['build:prod', 'connect:prod', 'watch']);
 
 };
