@@ -2,7 +2,7 @@
   "name": "KinemaJS",
   "version": "0.0.0",
   "description": "A canvas modular framework",
-  "main": "index.js",
+  "main": "src/lib/Kinema.js",
   "directories": {
     "test": "test"
   },
