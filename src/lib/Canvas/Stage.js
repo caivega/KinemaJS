@@ -22,14 +22,16 @@ Stage.prototype.add = function (layer) {
 
 Stage.prototype.resize = function (dimensions) {
 	var dim    = {}
-	  , width  = dimensions.width
-	  , height = dimensions.height
+	  , width  = parseInt(dimensions.width)
+	  , height = parseInt(dimensions.height)
 	  , style  = this.container.style
-	if (typeof width === 'number') {
+	if (isFinite(width)) {
 		style.width  = width  + 'px'
+		this.width   = width
 	}
-	if (typeof height === 'number') {
+	if (isFinite(height)) {
 		style.height = height + 'px'
+		this.height  = height
 	}
 }
 
