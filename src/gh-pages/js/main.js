@@ -2,6 +2,7 @@ var Kinema = require('../../lib/Kinema.js')
 
 var pause = true
 var mute  = true
+var resized = false
 
 var stage = new Kinema.Stage({
 	container: 'container',
@@ -21,13 +22,16 @@ var circle = new Kinema.Circle({
 layer.add(circle)
 stage.add(layer)
 
+var getById = document.getElementById.bind(document)
+
 var elem = {
-    play_pause: document.getElementById('play_pause'),
-    play_mute: document.getElementById('play_mute'),
-    stop: document.getElementById('stop'),
-    seek: document.getElementById('seek'),
-    timeSeek: document.getElementById('num-seek'),
-    speed: document.getElementById('speed')
+    play_pause: getById('play_pause'),
+    play_mute: getById('play_mute'),
+    stop: getById('stop'),
+    seek: getById('seek'),
+    timeSeek: getById('num-seek'),
+    speed: getById('speed'),
+    resize: getById('resize')
 }
 
 var animation = new Kinema.Animation(function (frame) {
@@ -78,4 +82,20 @@ elem.speed.addEventListener('input', function () {
   speed = parseFloat(speed)
   //console.log('speed', speed)
   animation.speed(speed)
+})
+
+elem.resize.addEventListener('click', function () {
+  if (resized) {
+    resized = false
+    stage.resize({
+      width: 500, 
+      height: 500
+    })
+  } else {
+    resized = true
+    stage.resize({
+      width: 300, 
+      height: 300
+    })
+  }
 })
